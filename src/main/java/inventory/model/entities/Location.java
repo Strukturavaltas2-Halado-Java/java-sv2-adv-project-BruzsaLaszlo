@@ -1,37 +1,39 @@
 package inventory.model.entities;
 
-import inventory.model.enums.RoomName;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import inventory.model.enums.Room;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "rooms")
+@Table(name = "locations")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Room {
+@Setter
+@ToString
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
+    private String name;
+
     @Enumerated(EnumType.STRING)
-    private RoomName name;
+    private Room room;
 
-    private String description;
+    private String info;
 
-    @OneToMany(mappedBy = "room")
+    @OneToMany(mappedBy = "location")
+    @ToString.Exclude
     private List<Thing> things = new ArrayList<>();
-
 
     public void addThing(Thing thing) {
         things.add(thing);
-        thing.setRoom(this);
+        thing.setLocation(this);
     }
 }

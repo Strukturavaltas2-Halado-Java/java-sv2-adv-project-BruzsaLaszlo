@@ -1,12 +1,10 @@
 create table things
 (
-    id          bigint auto_increment
-        primary key,
-    description varchar(255) null,
-    picture     mediumblob   null,
+    id          bigint auto_increment primary key,
     type        varchar(255) null,
+    description varchar(255) null,
     updated     datetime(6)  null,
-    room_id     bigint       null,
-    constraint fk_room
-        foreign key (room_id) references rooms (id)
+    location_id bigint       null,
+
+    constraint fk_location foreign key (location_id) references locations (id)
 );
