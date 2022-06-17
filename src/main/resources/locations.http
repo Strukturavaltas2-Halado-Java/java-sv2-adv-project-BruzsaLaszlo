@@ -1,0 +1,26 @@
+###
+GET http://localhost:8080/api/locations
+
+
+###
+POST http://localhost:8080/api/locations
+Content-Type: application/json
+
+{
+    "name": "own",
+    "room": "HOUSE",
+    "info": "valami2"
+}
+
+
+###
+PUT http://localhost:8080/api/locations/1
+Content-Type: application/json
+
+{
+    "info": "uj desc"
+}
+
+
+###
+DELETE http://localhost:8080/api/locations/1
