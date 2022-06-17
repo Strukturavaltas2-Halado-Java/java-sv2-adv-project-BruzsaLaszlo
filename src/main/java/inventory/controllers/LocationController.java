@@ -3,6 +3,7 @@ package inventory.controllers;
 import inventory.model.dtos.LocationCreateCommand;
 import inventory.model.dtos.LocationDto;
 import inventory.model.dtos.LocationInfoCommand;
+import inventory.model.enums.Room;
 import inventory.services.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -55,7 +56,8 @@ public class LocationController {
     @Operation(summary = "Update location description by id")
     @ApiResponse(
             responseCode = "202",
-            description = "Location description has been updated")
+            description = "Location description has been updated",
+            content = @Content(mediaType = "application/json"))
     public LocationDto updateLocationInfo(
             @PathVariable(name = "id") long id,
             @RequestBody LocationInfoCommand locationInfoCommand) {
@@ -69,9 +71,29 @@ public class LocationController {
     @ApiResponse(
             responseCode = "204",
             description = "Location has been deleted")
-    public void deletelocation(@PathVariable(name = "id") long id) {
+    public void deleteLocation(@PathVariable(name = "id") long id) {
         service.deleteLocation(id);
     }
 
 
+    @GetMapping("/names")
+    @Operation(summary = "Get all location names")
+    @ApiResponse(
+            responseCode = "200",
+            description = "All location names",
+            content = @Content(mediaType = "application/json"))
+    public List<String> findAllLocationNames() {
+        return service.getAllLocationNames();
+    }
+
+
+    @GetMapping("/{name}/rooms")
+    @Operation(summary = "Get all location names")
+    @ApiResponse(
+            responseCode = "200",
+            description = "All location names",
+            content = @Content(mediaType = "application/json"))
+    public List<Room> findAllLocationRoomByName(@PathVariable(name = "name") String name) {
+        return service.findAllLocationRoomByName(name);
+    }
 }

@@ -32,6 +32,11 @@ public class Location {
     @ToString.Exclude
     private List<Thing> things = new ArrayList<>();
 
+    public Location(String name, Room room) {
+        this.name = name;
+        this.room = room;
+    }
+
     public void addThing(Thing thing) {
         things.add(thing);
         thing.setLocation(this);
