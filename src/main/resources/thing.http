@@ -1,0 +1,39 @@
+### Get all things
+GET http://localhost:8080/api/things
+
+
+### Create thing
+POST http://localhost:8080/api/things
+Content-Type: application/json
+
+{
+    "locationId": 1,
+    "description": "töltö 12V"
+}
+
+
+### Update thing description
+PUT http://localhost:8080/api/things/1/description
+Content-Type: application/json
+
+{
+    "description": "töltö 6V"
+}
+
+### Update thing location
+PUT http://localhost:8080/api/things/1/location
+Content-Type: application/json
+
+{
+    "locationId": "2"
+}
+
+
+### Delete thing by ID
+DELETE http://localhost:8080/api/things/1
+
+### List things in locatoggdfgd
+GET http://localhost:8080/api/things/names
+
+### gdfg dfgdf
+GET http://localhost:8080/api/things/own/rooms
