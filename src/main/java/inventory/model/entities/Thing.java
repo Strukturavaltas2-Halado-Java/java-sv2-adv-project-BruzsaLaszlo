@@ -1,8 +1,6 @@
 package inventory.model.entities;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import inventory.model.enums.ThingType;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +12,6 @@ import java.util.List;
 
 @Entity
 @Table(name = "things")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
@@ -25,7 +22,6 @@ public class Thing {
     private Long id;
 
     @ManyToOne
-    @JsonBackReference
     private Location location;
 
     @Enumerated(EnumType.STRING)
@@ -33,14 +29,20 @@ public class Thing {
 
     @ElementCollection(fetch = FetchType.LAZY)
     @JoinTable(name = "pictures", joinColumns = @JoinColumn(name = "thing_id"))
-    private List<byte[]> pictures = new ArrayList<>();
+    private List<Picture> pictures = new ArrayList<>();
 
     private String description;
 
     private LocalDateTime updated;
 
-    public void addPicture(byte[] picture) {
-        pictures.add(picture);
+    public void addPicture(String contentType, byte[] data) {
+        pictures.add(new Picture(contentType, data));
+    }
+
+    public Thing(Location location, ThingType type, String description) {
+        this.location = location;
+        this.type = type;
+        this.description = description;
     }
 
     @PrePersist

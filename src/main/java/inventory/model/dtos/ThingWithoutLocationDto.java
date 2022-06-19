@@ -1,6 +1,5 @@
 package inventory.model.dtos;
 
-import inventory.model.entities.Picture;
 import inventory.model.enums.ThingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,7 +16,7 @@ public class ThingWithoutLocationDto implements Serializable {
 
     private Long id;
     private ThingType type;
-    private List<Picture> pictures;
+    private List<PictureDto> pictures;
     private String description;
     private LocalDateTime updated;
 

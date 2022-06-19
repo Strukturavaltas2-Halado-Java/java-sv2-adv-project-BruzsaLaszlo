@@ -1,6 +1,5 @@
 package inventory.model.dtos;
 
-import inventory.model.entities.Picture;
 import inventory.model.enums.ThingType;
 import lombok.Data;
 
@@ -13,7 +12,7 @@ public class ThingDto implements Serializable {
 
     private Long id;
     private ThingType type;
-    private List<Picture> pictures;
+    private List<PictureDto> pictures;
     private String description;
     private LocalDateTime updated;
 
