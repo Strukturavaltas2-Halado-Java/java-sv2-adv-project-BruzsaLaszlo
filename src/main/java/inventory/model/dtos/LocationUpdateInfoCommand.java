@@ -1,15 +1,15 @@
 package inventory.model.dtos;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationInfoCommand implements Serializable {
+@Getter
+public class LocationUpdateInfoCommand implements Serializable {
 
     private String info;
 
