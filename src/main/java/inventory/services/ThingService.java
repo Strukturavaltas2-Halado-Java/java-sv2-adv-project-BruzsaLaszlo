@@ -1,23 +1,28 @@
 package inventory.services;
 
-import inventory.model.entities.Location;
 import inventory.exceptions.LocationNotFoundException;
-import inventory.repositories.LocationRepository;
+import inventory.exceptions.PictureUploadException;
+import inventory.exceptions.ThingNotFoundException;
 import inventory.model.dtos.ThingCreateCommand;
 import inventory.model.dtos.ThingDto;
 import inventory.model.dtos.ThingUpdateDescriptionCommand;
 import inventory.model.dtos.ThingUpdateLocationCommand;
+import inventory.model.entities.Location;
 import inventory.model.entities.Thing;
-import inventory.exceptions.ThingNotFoundException;
+import inventory.model.enums.ThingType;
+import inventory.repositories.LocationRepository;
 import inventory.repositories.ThingRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,16 +33,14 @@ public class ThingService {
 
     private final ModelMapper modelMapper;
 
-    public List<ThingDto> findAllThing() {
-        List<Thing> all = thingRepository.findAll();
-        return modelMapper.map(all, new TypeToken<List<ThingDto>>() {
+    public List<ThingDto> getThings(Optional<String> description, Optional<ThingType> type) {
+        List<Thing> result = thingRepository.getFilteredThings(description, type);
+        return modelMapper.map(result, new TypeToken<List<ThingDto>>() {
         }.getType());
     }
 
-    //    @Transactional
     public ThingDto createThing(ThingCreateCommand thingCreateCommand) {
-        Location location = locationRepository.findById(thingCreateCommand.getLocationId())
-                .orElseThrow(() -> new LocationNotFoundException(thingCreateCommand.getLocationId()));
+        Location location = findLocationById(thingCreateCommand.getLocationId());
         Thing thing = new Thing(location, thingCreateCommand.getType(), thingCreateCommand.getDescription());
         thingRepository.save(thing);
         return modelMapper.map(thing, ThingDto.class);
@@ -45,22 +48,17 @@ public class ThingService {
 
     @Transactional
     public ThingDto updateThingDescription(long id, ThingUpdateDescriptionCommand thingUpdateDescriptionCommand) {
-        Thing thing = findById(id);
+        Thing thing = findThingById(id);
         thing.setDescription(thingUpdateDescriptionCommand.getDescription());
         return modelMapper.map(thing, ThingDto.class);
     }
 
     @Transactional
     public ThingDto updateThingLocation(long id, ThingUpdateLocationCommand thingUpdateLocationCommand) {
-        Location location = locationRepository.findById(thingUpdateLocationCommand.getLocationId())
-                .orElseThrow(() -> new LocationNotFoundException(thingUpdateLocationCommand.getLocationId()));
-        Thing thing = findById(id);
+        Location location = findLocationById(thingUpdateLocationCommand.getLocationId());
+        Thing thing = findThingById(id);
         thing.setLocation(location);
         return modelMapper.map(thing, ThingDto.class);
-    }
-
-    private Thing findById(long id) {
-        return thingRepository.findById(id).orElseThrow(() -> new ThingNotFoundException(id));
     }
 
     public void deleteThingById(long id) {
@@ -69,5 +67,27 @@ public class ThingService {
         } catch (EmptyResultDataAccessException e) {
             throw new ThingNotFoundException(id);
         }
+    }
+
+    @Transactional
+    public void addPicture(long id, MultipartFile file) {
+        try {
+            Thing thing = thingRepository.getReferenceById(id);
+            thing.addPicture(file.getContentType(), file.getBytes());
+        } catch (IOException e) {
+            throw new PictureUploadException(e);
+        }
+    }
+
+    public ThingDto findById(long id) {
+        return modelMapper.map(findThingById(id), ThingDto.class);
+    }
+
+    private Thing findThingById(long id) {
+        return thingRepository.findById(id).orElseThrow(() -> new ThingNotFoundException(id));
+    }
+
+    private Location findLocationById(long id) {
+        return locationRepository.findById(id).orElseThrow(() -> new LocationNotFoundException(id));
     }
 }

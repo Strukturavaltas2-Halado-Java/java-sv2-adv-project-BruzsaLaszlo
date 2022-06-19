@@ -1,20 +1,27 @@
 package inventory.model.dtos;
 
 import inventory.model.enums.ThingType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class ThingCreateCommand implements Serializable {
 
-    private LocationDto room;
+    @NotNull
+    private Long locationId;
+
     private ThingType type;
-    private byte[] picture;
+
     private String description;
 
+    private byte[] picture;
+
+
+    public ThingCreateCommand(Long locationId, ThingType type, String description) {
+        this.locationId = locationId;
+        this.type = type;
+        this.description = description;
+    }
 }

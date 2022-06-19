@@ -8,7 +8,8 @@ Content-Type: application/json
 
 {
     "locationId": 1,
-    "description": "töltö 12V"
+    "description": "28mm kulcs",
+    "type": "HAND_TOOL"
 }
 
 
@@ -30,10 +31,21 @@ Content-Type: application/json
 
 
 ### Delete thing by ID
-DELETE http://localhost:8080/api/things/1
+DELETE http://localhost:8080/api/things/3
 
-### List things in locatoggdfgd
-GET http://localhost:8080/api/things/names
+### List filtered things
+GET http://localhost:8080/api/things?type=HAND_TOOL&description=28mm
 
 ### gdfg dfgdf
 GET http://localhost:8080/api/things/own/rooms
+
+###
+POST http://localhost:8080/api/things/upload
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="data"; filename="data.json"
+Content-Type: application/json
+
+< ./request-form-data.json
+--WebAppBoundary--
