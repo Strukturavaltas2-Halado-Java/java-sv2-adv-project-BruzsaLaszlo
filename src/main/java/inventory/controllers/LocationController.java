@@ -2,7 +2,7 @@ package inventory.controllers;
 
 import inventory.model.dtos.LocationCreateCommand;
 import inventory.model.dtos.LocationDto;
-import inventory.model.dtos.LocationInfoCommand;
+import inventory.model.dtos.LocationUpdateInfoCommand;
 import inventory.model.enums.Room;
 import inventory.services.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -60,8 +60,8 @@ public class LocationController {
             content = @Content(mediaType = "application/json"))
     public LocationDto updateLocationInfo(
             @PathVariable(name = "id") long id,
-            @RequestBody LocationInfoCommand locationInfoCommand) {
-        return service.updateLocationInfo(id, locationInfoCommand);
+            @RequestBody LocationUpdateInfoCommand locationUpdateInfoCommand) {
+        return service.updateLocationInfo(id, locationUpdateInfoCommand);
     }
 
 
@@ -96,4 +96,5 @@ public class LocationController {
     public List<Room> findAllLocationRoomByName(@PathVariable(name = "name") String name) {
         return service.findAllLocationRoomByName(name);
     }
+
 }

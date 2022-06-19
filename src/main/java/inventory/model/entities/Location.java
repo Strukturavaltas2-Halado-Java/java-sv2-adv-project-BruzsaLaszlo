@@ -1,7 +1,10 @@
 package inventory.model.entities;
 
 import inventory.model.enums.Room;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,11 +12,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "locations")
-@AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 public class Location {
 
     @Id
@@ -28,13 +29,19 @@ public class Location {
 
     private String info;
 
-    @OneToMany(mappedBy = "location")
+    @OneToMany(mappedBy = "location", cascade = CascadeType.PERSIST)
     @ToString.Exclude
     private List<Thing> things = new ArrayList<>();
 
     public Location(String name, Room room) {
         this.name = name;
         this.room = room;
+    }
+
+    public Location(String name, Room room, String info) {
+        this.name = name;
+        this.room = room;
+        this.info = info;
     }
 
     public void addThing(Thing thing) {
