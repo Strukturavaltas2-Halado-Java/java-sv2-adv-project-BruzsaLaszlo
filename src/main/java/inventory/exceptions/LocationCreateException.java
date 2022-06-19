@@ -14,7 +14,7 @@ public class LocationCreateException extends AbstractThrowableProblem {
         super(
                 URI.create("location/already-exist"),
                 "Location already exist",
-                Status.NOT_FOUND,
+                Status.NOT_ACCEPTABLE,
                 "Location already exist with name: %s and with room: %s ".formatted(name, room)
         );
     }
