@@ -19,6 +19,7 @@ import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.zalando.problem.Problem;
 
 import static inventory.model.enums.Room.BASEMENT;
 import static inventory.model.enums.ThingType.*;
@@ -84,6 +85,41 @@ class ThingControllerIT {
     }
 
     @Test
+    void testInvalidCreateThing() {
+        webTestClient
+                .post()
+                .uri("/api/things")
+                .bodyValue(new ThingCreateCommand(null, ELECTRIC, "230V -> 12V 2A"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
+
+        webTestClient
+                .post()
+                .uri("/api/things")
+                .bodyValue(new ThingCreateCommand(location.getId(), null, "230V -> 12V 2A"))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
+
+        webTestClient
+                .post()
+                .uri("/api/things")
+                .bodyValue(new ThingCreateCommand(location.getId(), ELECTRIC, null))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
+
+        webTestClient
+                .post()
+                .uri("/api/things")
+                .bodyValue(new ThingCreateCommand(location.getId(), ELECTRIC, "   "))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
+    }
+
+    @Test
     void testUpdateThingDescription() {
         String description = "power supply 12V/2A, DC-Jack diameter 5.5mm/2.1mm";
         webTestClient
@@ -97,6 +133,17 @@ class ThingControllerIT {
     }
 
     @Test
+    void testInvalidUpdateThingDescription() {
+        webTestClient
+                .put()
+                .uri("/api/things/{id}/description", powerSupply.getId())
+                .bodyValue(new ThingUpdateDescriptionCommand())
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
+    }
+
+    @Test
     void testUpdateThingLocation() {
         Location newLocation = locationRepository.save(new Location("saját", Room.GARAGE_ATTIC));
         webTestClient
@@ -107,6 +154,18 @@ class ThingControllerIT {
                 .expectStatus().is2xxSuccessful()
                 .expectBody()
                 .jsonPath("$.location.name").isEqualTo("saját");
+    }
+
+    @Test
+    void testInvalidUpdateThingLocation() {
+        Location newLocation = locationRepository.save(new Location("saját", Room.GARAGE_ATTIC));
+        webTestClient
+                .put()
+                .uri("/api/things/{id}/location", powerSupply.getId())
+                .bodyValue(new ThingUpdateLocationCommand())
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
     }
 
     @Test
@@ -148,9 +207,9 @@ class ThingControllerIT {
     }
 
     @Test
-    void testFileUpload() {
+    void testPictureUpload() {
         var builder = new MultipartBodyBuilder();
-        builder.part("file", new ClassPathResource("create.sql"));
+        builder.part("file", new ClassPathResource("IMG_20220610_211100.jpg"));
 
         webTestClient
                 .post()
@@ -167,6 +226,21 @@ class ThingControllerIT {
                 .expectStatus().isOk()
                 .expectBody(ThingDto.class)
                 .value(thingDto -> assertThat(thingDto.getPictures()).hasSize(1));
+    }
+
+    @Test
+    void testPictureUploadWithInvalidFile() {
+        var builder = new MultipartBodyBuilder();
+        builder.part("file", new ClassPathResource("thing.http"));
+
+        webTestClient
+                .post()
+                .uri("/api/things/{id}/picture", powerSupply.getId())
+                .contentType(MediaType.MULTIPART_FORM_DATA)
+                .body(BodyInserters.fromMultipartData(builder.build()))
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
     }
 
     @Test

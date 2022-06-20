@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.zalando.problem.Problem;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ class LocationControllerIT {
     Location nyaralo;
 
     @BeforeEach
-    void setUp() {
+    void inic() {
         nyaralo = locationRepository.save(new Location("Nyaraló", BASEMENT, "nedves"));
         locationRepository.save(new Location("own house", GARAGE));
         locationRepository.save(new Location("Mother house", GARAGE_ATTIC, "one stair broken!, full"));
@@ -49,7 +50,7 @@ class LocationControllerIT {
     }
 
     @Test
-    void createLocation() {
+    void testCreateLocation() {
         webTestClient
                 .post()
                 .uri("/api/locations")
@@ -63,47 +64,30 @@ class LocationControllerIT {
     }
 
     @Test
-    void updateLocationInfo() {
-        String newInfo = "beletört a kulcs, nem zárható";
+    void testInvalidCreate() {
         webTestClient
-                .put()
-                .uri("/api/locations/{id}", nyaralo.getId())
-                .bodyValue(new LocationUpdateInfoCommand(newInfo))
+                .post()
+                .uri("/api/locations")
+                .bodyValue(new LocationCreateCommand("", null, "nincs létra"))
                 .exchange()
-                .expectStatus().is2xxSuccessful()
-                .expectBody().jsonPath("info", newInfo);
-    }
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
 
-    @Test
-    void deleteLocation() {
         webTestClient
-                .delete()
-                .uri("/api/locations/{id}", nyaralo.getId())
+                .post()
+                .uri("/api/locations")
+                .bodyValue(new LocationCreateCommand(" ", BASEMENT, "nincs létra"))
                 .exchange()
-                .expectStatus().isNoContent();
-    }
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
 
-    @Test
-    void findAllLocationNames() {
         webTestClient
-                .get()
-                .uri("/api/locations/names")
+                .post()
+                .uri("/api/locations")
+                .bodyValue(new LocationCreateCommand(null, BASEMENT, "nincs létra"))
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody(new ParameterizedTypeReference<List<String>>() {
-                })
-                .value(list -> assertThat(list).containsExactlyInAnyOrder("own house", "Nyaraló", "Mother house"));
-    }
-
-    @Test
-    void findAllLocationRoomByName() {
-        webTestClient
-                .get()
-                .uri("/api/locations/{name}/rooms", nyaralo.getName())
-                .exchange()
-                .expectBody(new ParameterizedTypeReference<List<String>>() {
-                })
-                .value(list -> assertThat(list).containsExactly("BASEMENT"));
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
     }
 
     @Test
@@ -115,6 +99,61 @@ class LocationControllerIT {
                 .exchange()
                 .expectStatus().is4xxClientError();
 
+    }
+
+    @Test
+    void testUpdateLocationInfo() {
+        String newInfo = "beletört a kulcs, nem zárható";
+        webTestClient
+                .put()
+                .uri("/api/locations/{id}", nyaralo.getId())
+                .bodyValue(new LocationUpdateInfoCommand(newInfo))
+                .exchange()
+                .expectStatus().is2xxSuccessful()
+                .expectBody().jsonPath("info", newInfo);
+    }
+
+    @Test
+    void testInvalidUpdateLocationInfo() {
+        webTestClient
+                .put()
+                .uri("/api/locations/{id}", nyaralo.getId())
+                .bodyValue(new LocationUpdateInfoCommand())
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class);
+    }
+
+    @Test
+    void testdeleteLocation() {
+        webTestClient
+                .delete()
+                .uri("/api/locations/{id}", nyaralo.getId())
+                .exchange()
+                .expectStatus().isNoContent();
+    }
+
+    @Test
+    void testFindAllLocationNames() {
+        webTestClient
+                .get()
+                .uri("/api/locations/names")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<List<String>>() {
+                })
+                .value(list -> assertThat(list).containsExactlyInAnyOrder("own house", "Nyaraló", "Mother house"));
+    }
+
+    @Test
+    void testFindAllLocationRoomByName() {
+        webTestClient
+                .get()
+                .uri("/api/locations/{name}/rooms", nyaralo.getName())
+                .exchange()
+                .expectBody(new ParameterizedTypeReference<List<String>>() {
+                })
+                .value(list -> assertThat(list).containsExactly("BASEMENT"));
     }
 
     @Test
