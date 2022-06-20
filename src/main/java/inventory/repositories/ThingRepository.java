@@ -16,6 +16,6 @@ public interface ThingRepository extends JpaRepository<Thing, Long> {
             WHERE (:description IS NULL OR t.description LIKE concat('%',:description,'%')) AND
                   (:type IS NULL OR t.type = :type)
             """)
-    List<Thing> getFilteredThings(Optional<String> description, Optional<ThingType> type);
+    List<Thing> findThingsByDescriptionAndType(Optional<String> description, Optional<ThingType> type);
 
 }

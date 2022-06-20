@@ -33,8 +33,8 @@ public class ThingService {
 
     private final ModelMapper modelMapper;
 
-    public List<ThingDto> getThings(Optional<String> description, Optional<ThingType> type) {
-        List<Thing> result = thingRepository.getFilteredThings(description, type);
+    public List<ThingDto> findThingsByDescriptionAndType(Optional<String> description, Optional<ThingType> type) {
+        List<Thing> result = thingRepository.findThingsByDescriptionAndType(description, type);
         return modelMapper.map(result, new TypeToken<List<ThingDto>>() {
         }.getType());
     }
@@ -70,12 +70,12 @@ public class ThingService {
     }
 
     @Transactional
-    public void addPicture(long id, MultipartFile file) {
+    public void addPicture(long id, MultipartFile picture) {
         try {
             Thing thing = thingRepository.getReferenceById(id);
-            thing.addPicture(file.getContentType(), file.getBytes());
+            thing.addPicture(picture.getContentType(), picture.getBytes());
         } catch (IOException e) {
-            throw new PictureUploadException(e);
+            throw new PictureUploadException(e.getMessage());
         }
     }
 
@@ -90,4 +90,5 @@ public class ThingService {
     private Location findLocationById(long id) {
         return locationRepository.findById(id).orElseThrow(() -> new LocationNotFoundException(id));
     }
+
 }

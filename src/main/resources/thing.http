@@ -36,16 +36,15 @@ DELETE http://localhost:8080/api/things/3
 ### List filtered things
 GET http://localhost:8080/api/things?type=HAND_TOOL&description=28mm
 
-### gdfg dfgdf
-GET http://localhost:8080/api/things/own/rooms
-
-###
-POST http://localhost:8080/api/things/upload
+### Upload picture
+POST http://localhost:8080/api/things/1/picture
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="data"; filename="data.json"
-Content-Type: application/json
+Content-Disposition: form-data; name="file"; filename="create.jpg"
 
-< ./request-form-data.json
---WebAppBoundary--
+// The 'input.txt' file will be uploaded
+< create.sql
+
+1
+--WebAppBoundary
