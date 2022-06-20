@@ -69,7 +69,7 @@ public class LocationController {
             content = @Content(mediaType = "application/problem+json"))
     public LocationDto updateLocationInfo(
             @PathVariable(name = "id") long id,
-            @RequestBody LocationUpdateInfoCommand locationUpdateInfoCommand) {
+            @RequestBody @Valid LocationUpdateInfoCommand locationUpdateInfoCommand) {
         return service.updateLocationInfo(id, locationUpdateInfoCommand);
     }
 
