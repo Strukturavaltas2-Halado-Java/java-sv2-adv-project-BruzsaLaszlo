@@ -1,5 +1,7 @@
 package inventory;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
@@ -24,4 +26,12 @@ public class InventoryApplication {
         return modelMapper;
     }
 
+    @Bean
+    public OpenAPI customOpenAPI() {
+        return new OpenAPI()
+                .info(new Info()
+                        .title("Inventory API")
+                        .version("1.0.0")
+                        .description("Operations with `things`"));
+    }
 }

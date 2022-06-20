@@ -8,6 +8,7 @@ import inventory.services.LocationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,7 @@ import static org.springframework.http.HttpStatus.NO_CONTENT;
 @RestController
 @RequestMapping("/api/locations")
 @RequiredArgsConstructor
+@Tag(name = "`Location` végpontok")
 public class LocationController {
 
 
@@ -28,10 +30,10 @@ public class LocationController {
 
 
     @GetMapping
-    @Operation(summary = "Get all locations")
+    @Operation(summary = "Az összes hely lekérdezése")
     @ApiResponse(
             responseCode = "200",
-            description = "All locations",
+            description = "Az összes hely egy listában",
             content = @Content(mediaType = "application/json"))
     public List<LocationDto> getAllLocation() {
         return service.findAllLocation();
@@ -40,24 +42,31 @@ public class LocationController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create a location")
+    @Operation(summary = "Új hely mentése")
     @ApiResponse(
             responseCode = "201",
-            description = "Location has been created",
+            description = "Új hely elmentve",
             content = @Content(mediaType = "application/json"))
+    @ApiResponse(
+            responseCode = "406",
+            description = "A hely már létezik",
+            content = @Content(mediaType = "application/problem+json"))
     public LocationDto createLocation(@RequestBody @Valid LocationCreateCommand locationCreateCommand) {
-        System.out.println(locationCreateCommand);
         return service.createLocation(locationCreateCommand);
     }
 
 
     @PutMapping("/{id}")
     @ResponseStatus(ACCEPTED)
-    @Operation(summary = "Update location description by id")
+    @Operation(summary = "A hely információ frissítése")
     @ApiResponse(
             responseCode = "202",
-            description = "Location description has been updated",
+            description = "A hely információ frissítése sikeres",
             content = @Content(mediaType = "application/json"))
+    @ApiResponse(
+            responseCode = "404",
+            description = "A hely nem található",
+            content = @Content(mediaType = "application/problem+json"))
     public LocationDto updateLocationInfo(
             @PathVariable(name = "id") long id,
             @RequestBody LocationUpdateInfoCommand locationUpdateInfoCommand) {
@@ -67,20 +76,24 @@ public class LocationController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(NO_CONTENT)
-    @Operation(summary = "Delete location by id")
+    @Operation(summary = "Hely törlése ID alapján")
     @ApiResponse(
             responseCode = "204",
-            description = "Location has been deleted")
+            description = "A hely eltávolításra került")
+    @ApiResponse(
+            responseCode = "404",
+            description = "A hely nem található",
+            content = @Content(mediaType = "application/problem+json"))
     public void deleteLocation(@PathVariable(name = "id") long id) {
         service.deleteLocation(id);
     }
 
 
     @GetMapping("/names")
-    @Operation(summary = "Get all location names")
+    @Operation(summary = "Az összes hely nevének listája")
     @ApiResponse(
             responseCode = "200",
-            description = "All location names",
+            description = "A helyek neveinek listája",
             content = @Content(mediaType = "application/json"))
     public List<String> findAllLocationNames() {
         return service.getAllLocationNames();
@@ -88,10 +101,10 @@ public class LocationController {
 
 
     @GetMapping("/{name}/rooms")
-    @Operation(summary = "Get all location names")
+    @Operation(summary = "A hely összes helyisége")
     @ApiResponse(
             responseCode = "200",
-            description = "All location names",
+            description = "A helyiségek listája",
             content = @Content(mediaType = "application/json"))
     public List<Room> findAllLocationRoomByName(@PathVariable(name = "name") String name) {
         return service.findAllLocationRoomByName(name);

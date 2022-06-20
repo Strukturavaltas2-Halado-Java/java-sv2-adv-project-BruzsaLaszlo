@@ -3,6 +3,7 @@ package inventory.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,8 +15,8 @@ import org.zalando.problem.Status;
 import java.net.URI;
 
 @RestController
+@Tag(name = "Nem létező végpont kezelése")
 public class ErrorHandlerController implements ErrorController {
-
 
     @GetMapping("/error")
     @ResponseStatus(HttpStatus.NOT_FOUND)
