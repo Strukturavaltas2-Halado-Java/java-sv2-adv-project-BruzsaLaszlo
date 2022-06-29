@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -114,12 +115,13 @@ public class ThingController {
     }
 
 
-    @PostMapping("/{id}/picture")
+    @PostMapping(value = "/{id}/picture", consumes = "multipart/form-data")
     @ResponseStatus(CREATED)
     @Operation(summary = "Kép hozzáadása tárgyhoz")
     @ApiResponse(
             responseCode = "201",
-            description = "A kép a tárgyhoz hozzáadva")
+            description = "A kép a tárgyhoz hozzáadva",
+            content = @Content(mediaType = MediaType.MULTIPART_FORM_DATA_VALUE))
     @ApiResponse(
             responseCode = "404",
             description = "A tárgy nem található",
@@ -129,8 +131,8 @@ public class ThingController {
             description = "A kép nem olvasható/hibás formátumú",
             content = @Content(mediaType = "application/problem+json"))
     public void addPictureToThing(
-            @PathVariable long id,
-            @Parameter(description = "csak jpg lehet") @RequestPart("file") @FileSize(MEDIUMBLOB) MultipartFile file
+            @PathVariable(name = "id") long id,
+            @Parameter(description = "csak kép lehet") @RequestPart("file") @FileSize(MEDIUMBLOB) MultipartFile file
     ) {
         service.addPicture(id, file);
     }
@@ -149,6 +151,25 @@ public class ThingController {
             content = @Content(mediaType = "application/problem+json"))
     public ThingDto findThingById(@PathVariable(name = "id") long id) {
         return service.findById(id);
+    }
+
+
+    @GetMapping("last-moved")
+    @ResponseStatus(OK)
+    @Operation(summary = "Utoljára áthelyezett tárgyak")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Utoljára áthelyezett tárgyak listája",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(
+            responseCode = "404",
+            description = "A hely nem található",
+            content = @Content(mediaType = "application/problem+json"))
+    public List<ThingDto> lastMoved(
+            @RequestParam(name = "count") Optional<Integer> count,
+            @RequestParam(name = "location-id") Optional<Long> locationId
+    ) {
+        return service.lastMoved(count, locationId);
     }
 
 

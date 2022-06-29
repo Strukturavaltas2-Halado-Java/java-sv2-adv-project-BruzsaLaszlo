@@ -7,15 +7,23 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public interface ThingRepository extends JpaRepository<Thing, Long> {
 
     @Query("""
             SELECT t
             FROM Thing t
-            WHERE (:description IS NULL OR t.description LIKE concat('%',:description,'%')) AND
-                  (:type IS NULL OR t.type = :type)
+            WHERE :description IS NULL OR t.description LIKE concat('%',:description,'%')
+                  AND
+                  :type IS NULL OR t.type = :type
             """)
     List<Thing> findThingsByDescriptionAndType(Optional<String> description, Optional<ThingType> type);
 
+    @Query("""
+            SELECT t
+            FROM Thing t
+            WHERE :locationId IS NULL OR t.location.id = :locationId
+            """)
+    Stream<Thing> findThingsByUpdatedTimeByLocation(Optional<Long> locationId);
 }

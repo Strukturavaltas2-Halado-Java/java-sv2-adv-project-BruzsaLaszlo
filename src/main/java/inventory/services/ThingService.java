@@ -91,4 +91,13 @@ public class ThingService {
         return locationRepository.findById(id).orElseThrow(() -> new LocationNotFoundException(id));
     }
 
+    @Transactional
+    public List<ThingDto> lastMoved(Optional<Integer> count, Optional<Long> locationId) {
+        locationId.ifPresent(this::findLocationById);
+        List<Thing> result = thingRepository.findThingsByUpdatedTimeByLocation(locationId)
+                .limit(count.isPresent() && count.get() > 0 ? count.get() : Integer.MAX_VALUE)
+                .toList();
+        return modelMapper.map(result, new TypeToken<List<ThingDto>>() {
+        }.getType());
+    }
 }
