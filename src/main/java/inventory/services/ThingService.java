@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,6 +25,8 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.data.domain.PageRequest.of;
 
 @Service
 @RequiredArgsConstructor
@@ -91,12 +95,10 @@ public class ThingService {
         return locationRepository.findById(id).orElseThrow(() -> new LocationNotFoundException(id));
     }
 
-    @Transactional
     public List<ThingDto> lastMoved(Optional<Integer> count, Optional<Long> locationId) {
         locationId.ifPresent(this::findLocationById);
-        List<Thing> result = thingRepository.findThingsByUpdatedTimeByLocation(locationId)
-                .limit(count.isPresent() && count.get() > 0 ? count.get() : Integer.MAX_VALUE)
-                .toList();
+        PageRequest pageRequest = of(0, count.orElse(Integer.MAX_VALUE), Sort.by("updated").descending());
+        List<Thing> result = thingRepository.findThingsByUpdatedTimeByLocation(locationId, pageRequest);
         return modelMapper.map(result, new TypeToken<List<ThingDto>>() {
         }.getType());
     }

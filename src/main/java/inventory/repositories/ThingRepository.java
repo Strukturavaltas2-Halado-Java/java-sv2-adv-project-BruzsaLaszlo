@@ -2,12 +2,12 @@ package inventory.repositories;
 
 import inventory.model.entities.Thing;
 import inventory.model.enums.ThingType;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public interface ThingRepository extends JpaRepository<Thing, Long> {
 
@@ -20,10 +20,11 @@ public interface ThingRepository extends JpaRepository<Thing, Long> {
             """)
     List<Thing> findThingsByDescriptionAndType(Optional<String> description, Optional<ThingType> type);
 
+
     @Query("""
             SELECT t
             FROM Thing t
             WHERE :locationId IS NULL OR t.location.id = :locationId
             """)
-    Stream<Thing> findThingsByUpdatedTimeByLocation(Optional<Long> locationId);
+    List<Thing> findThingsByUpdatedTimeByLocation(Optional<Long> locationId, Pageable pageable);
 }
