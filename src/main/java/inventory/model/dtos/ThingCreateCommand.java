@@ -15,16 +15,16 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class ThingCreateCommand implements Serializable {
 
-    @NotNull
-    @Schema(description = "a location ID-ja", example = "1")
+    @NotNull(message = "A helyszín ID-ja nem lehet null")
+    @Schema(description = "a helyszín ID-ja", example = "1")
     private Long locationId;
 
-    @NotNull
+    @NotNull(message = "A könnyebb kereshetőség érdekében tárgy típusa nem lehet null")
     @Schema(description = "a tárgy típusa (ENUM)", example = "HAND_TOOL")
     private ThingType type;
 
-    @NotBlank
-    @Schema(description = "leírás ami a lehető legtöbbet tartalmaz a tárgyról",
+    @NotBlank(message = "A tárgynak kell legyen leírása különben nehéz lesz rákeresni")
+    @Schema(description = "leírás ami a lehető legtöbb mindent tartalmaz a tárgyról",
             example = "power supply 12V/2A, DC-Jack diameter 5.5mm/2.1mm")
     private String description;
 

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 public class ThingUpdateLocationCommand {
 
-    @NotNull
+    @NotNull(message = "A helyszín ID-ja nem lehet null")
     @Schema(description = "a location ID-ja", example = "1")
     private Long locationId;
 

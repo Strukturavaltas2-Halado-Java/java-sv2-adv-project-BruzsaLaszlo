@@ -17,12 +17,12 @@ import java.io.Serializable;
 @NoArgsConstructor
 public class LocationCreateCommand implements Serializable {
 
-    @NotBlank
+    @NotBlank(message = "A location name nem lehet üres")
     @Schema(description = "name of the location", example = "nyaraló")
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @NotNull
+    @NotNull(message = "A helyiség neve nem lehet null")
     @Schema(description = "a helyiség neve", example = "pince")
     private Room room;
 
