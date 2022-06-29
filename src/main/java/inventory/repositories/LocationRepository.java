@@ -7,11 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
-
-    Optional<Location> findLocationByName(String name);
 
     @Query("SELECT DISTINCT l.name FROM Location l")
     List<String> findAllNames();
