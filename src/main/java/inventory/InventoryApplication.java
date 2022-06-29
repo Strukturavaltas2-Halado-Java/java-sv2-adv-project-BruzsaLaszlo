@@ -1,7 +1,8 @@
 package inventory;
 
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.config.Configuration;
 import org.modelmapper.convention.MatchingStrategies;
@@ -10,6 +11,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(
+        title = "Inventory API",
+        version = "1.0.0",
+        description = """
+                Alkalmazás ami nyilván tartja az otthon található ritkán használt tárgyakat(Thing entity).<br>
+                Amit alkalomszerűen használunk, évente 1-2-szer vagy több évente gyakran elfelejtjük hova is tettük.<br>
+                Főleg ha nem csak otthon de szüleinknél vagy akár a nyaralónkba is hagyhatunk dolgokat nehezíti a helyzetet,<br>
+                ha van mindenhol padlás, garázs, garázs padlás, pince több melléképület(Location entity).
+                """,
+        contact = @Contact(
+                name = "Bruzsa László",
+                email = "bruzsalaci@gmail.com")))
 public class InventoryApplication {
 
     public static void main(String[] args) {
@@ -26,12 +39,4 @@ public class InventoryApplication {
         return modelMapper;
     }
 
-    @Bean
-    public OpenAPI customOpenAPI() {
-        return new OpenAPI()
-                .info(new Info()
-                        .title("Inventory API")
-                        .version("1.0.0")
-                        .description("Operations with `things`"));
-    }
 }
