@@ -15,7 +15,7 @@ class InventoryApplicationTests {
     void testInvalidEndpoint() {
         webTestClient
                 .get()
-                .uri("/does-not-exist")
+                .uri("/invalid-url")
                 .exchange()
                 .expectStatus().isNotFound();
     }

@@ -209,7 +209,7 @@ class ThingControllerIT {
     @Test
     void testPictureUpload() {
         var builder = new MultipartBodyBuilder();
-        builder.part("file", new ClassPathResource("IMG_20220610_211100.jpg"));
+        builder.part("file", new ClassPathResource("/pic/IMG_20220629_095936.jpg"));
 
         webTestClient
                 .post()
@@ -251,5 +251,36 @@ class ThingControllerIT {
                 .exchange()
                 .expectStatus()
                 .isNotFound();
+    }
+
+    @Test
+    void testLastMoved() {
+        webTestClient
+                .get()
+                .uri("/api/things/last-moved")
+                .exchange()
+                .expectBodyList(ThingDto.class)
+                .hasSize(7);
+
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/things/last-moved")
+                        .queryParam("count", 3)
+                        .build())
+                .exchange()
+                .expectBodyList(ThingDto.class)
+                .hasSize(3);
+
+        Location newLocation = locationRepository.save(new Location("saját", Room.GARAGE_ATTIC));
+        webTestClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/api/things/last-moved")
+                        .queryParam("location-id", newLocation.getId())
+                        .build())
+                .exchange()
+                .expectBodyList(ThingDto.class)
+                .hasSize(0);
     }
 }
