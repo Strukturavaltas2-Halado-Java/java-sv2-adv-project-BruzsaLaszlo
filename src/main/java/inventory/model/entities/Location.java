@@ -22,11 +22,14 @@ public class Location {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(nullable = false)
     private String name;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Room room;
 
+    @Column(nullable = true)
     private String info;
 
     @OneToMany(mappedBy = "location", cascade = CascadeType.PERSIST)

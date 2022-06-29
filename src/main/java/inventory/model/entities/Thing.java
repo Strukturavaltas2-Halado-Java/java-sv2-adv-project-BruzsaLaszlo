@@ -31,6 +31,7 @@ public class Thing {
     @JoinTable(name = "pictures", joinColumns = @JoinColumn(name = "thing_id"))
     private List<Picture> pictures = new ArrayList<>();
 
+    @Column(nullable = false)
     private String description;
 
     private LocalDateTime updated;
@@ -45,9 +46,13 @@ public class Thing {
         this.description = description;
     }
 
-    @PrePersist
+    @PreUpdate
     void setUpdated() {
         updated = LocalDateTime.now();
     }
 
+    @PrePersist
+    void setCreated() {
+        updated = LocalDateTime.now();
+    }
 }
