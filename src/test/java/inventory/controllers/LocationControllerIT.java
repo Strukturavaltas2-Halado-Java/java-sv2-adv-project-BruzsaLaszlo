@@ -114,17 +114,6 @@ class LocationControllerIT {
     }
 
     @Test
-    void testInvalidUpdateLocationInfo() {
-        webTestClient
-                .put()
-                .uri("/api/locations/{id}", nyaralo.getId())
-                .bodyValue(new LocationUpdateInfoCommand())
-                .exchange()
-                .expectStatus().isBadRequest()
-                .expectBody(Problem.class);
-    }
-
-    @Test
     void testdeleteLocation() {
         webTestClient
                 .delete()
