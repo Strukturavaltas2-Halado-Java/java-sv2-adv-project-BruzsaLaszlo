@@ -8,8 +8,7 @@ Content-Type: application/json
 
 {
     "name": "own",
-    "room": "GARAGE_ATTIC",
-    "info": "valami2"
+    "room": "BASEMENT"
 }
 
 
@@ -18,7 +17,7 @@ PUT http://localhost:8080/api/locations/1
 Content-Type: application/json
 
 {
-    "info": "uj desc"
+    "info": "befolyt a víz, nedves"
 }
 
 

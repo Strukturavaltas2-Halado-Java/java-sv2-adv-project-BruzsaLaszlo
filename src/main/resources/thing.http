@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
     "locationId": 1,
-    "description": "28mm kulcs",
+    "description": "drót csiszoló korong",
     "type": "HAND_TOOL"
 }
 
@@ -18,7 +18,7 @@ PUT http://localhost:8080/api/things/1/description
 Content-Type: application/json
 
 {
-    "description": "töltö 6V"
+    "description": "drót csiszoló korong M14"
 }
 
 ### Update thing location
@@ -41,10 +41,13 @@ POST http://localhost:8080/api/things/1/picture
 Content-Type: multipart/form-data; boundary=WebAppBoundary
 
 --WebAppBoundary
-Content-Disposition: form-data; name="file"; filename="create.jpg"
+Content-Disposition: form-data; name="file"; filename="picture.jpeg"
 
-// The 'input.txt' file will be uploaded
-< create.sql
+// The picture file will be uploaded
+< pic/IMG_20220629_095936.jpg
 
 1
 --WebAppBoundary
+
+###
+GET http://localhost:8080/api/things/last-moved?count=1&location-id=1
