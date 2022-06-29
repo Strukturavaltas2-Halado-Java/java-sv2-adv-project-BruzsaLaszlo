@@ -6,8 +6,11 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Set;
 
 public class FileValidator implements ConstraintValidator<FileSize, MultipartFile> {
+
+    private final Set<String> extensions = Set.of("jpg", "jpeg", "bmp", "png");
 
     private long size;
 
@@ -28,9 +31,10 @@ public class FileValidator implements ConstraintValidator<FileSize, MultipartFil
                 valid = false;
             }
 
-            if (!Objects.requireNonNull(file.getOriginalFilename()).endsWith("jpg")) {
+            String filename = Objects.requireNonNull(file.getOriginalFilename());
+            if (extensions.stream().noneMatch(filename::endsWith)) {
                 context.buildConstraintViolationWithTemplate(
-                        "Incompatible file type " + file.getOriginalFilename()).addConstraintViolation();
+                        "Incompatible file type!").addConstraintViolation();
                 valid = false;
             }
 
