@@ -34,7 +34,7 @@ public class FileValidator implements ConstraintValidator<FileSize, MultipartFil
             String filename = Objects.requireNonNull(file.getOriginalFilename());
             if (extensions.stream().noneMatch(filename::endsWith)) {
                 context.buildConstraintViolationWithTemplate(
-                        "Incompatible file type!").addConstraintViolation();
+                        "Incompatible file type! Valid file type: " + extensions).addConstraintViolation();
                 valid = false;
             }
 
